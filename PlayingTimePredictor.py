@@ -134,7 +134,7 @@ for player_id in sample_submission["PLAYER_ID"].unique():
 
     #Use optimized linear regression model with the max function incorporated to make a prediction for the total number of plate appearance a player will get in 2024; the max function ensures the result is nonnegative
     Plate_Appearances_Prediction_2024 = round(max(0, 0.665651*Hit_Distance_vs_LHP_2022 - 0.47379*Hit_Distance_vs_RHP_2022 - 2.43703*Launch_Speed_vs_LHP_2022 + 2.41599*Launch_Speed_vs_RHP_2022 + 95.7543*Estimated_Batting_Average_Using_Speedangle_vs_RHP_2022 - 140.15*Estimated_wOBA_Using_Speedangle_vs_LHP_2022 + 97.6149*wOBA_Value_vs_LHP_2022 - 60.2109*BABIP_Value_vs_RHP_2022 - 54.711*ISO_Value_vs_LHP_2022 + 248.293*ISO_Value_vs_RHP_2022 + 0.034175*Plate_Appearances_2022 + 300.419*Double_vs_LHP_Percentage_2022 - 166.677*Double_vs_RHP_Percentage_2022 + 285.51*Single_vs_LHP_Percentage_2022 + 58.9504*Strikeout_vs_LHP_Percentage_2022 - 76.6566*Strikeout_vs_RHP_Percentage_2022 + 348.327*Walk_vs_RHP_Percentage_2022 + 32.9904*Barrel_vs_RHP_Percentage_2022 - 764.36*Delta_Bat_Score_vs_LHP_2022 - 465.359*Delta_Bat_Score_vs_RHP_2022 + 0.415185*Hit_Distance_vs_LHP_2023 - 0.15114*Hit_Distance_vs_RHP_2023 + 3.29479*Launch_Speed_vs_LHP_2023 + 2.66726*Launch_Speed_vs_RHP_2023 - 121.663*Estimated_Batting_Average_Using_Speedangle_vs_RHP_2023 - 48.2056*Estimated_wOBA_Using_Speedangle_vs_LHP_2023 + 92.8928*wOBA_Value_vs_LHP_2023 + 77.9598*BABIP_Value_vs_RHP_2023 + 136.633*ISO_Value_vs_LHP_2023 + 202.162*ISO_Value_vs_RHP_2023 + 0.617495*Plate_Appearances_2023 - 135.249*Double_vs_LHP_Percentage_2023 + 450.403*Double_vs_RHP_Percentage_2023 + 91.2746*Single_vs_LHP_Percentage_2023 - 150.458*Strikeout_vs_LHP_Percentage_2023 - 13.8309*Strikeout_vs_RHP_Percentage_2023 - 82.0227*Walk_vs_RHP_Percentage_2023 + 229.58*Barrel_vs_RHP_Percentage_2023 - 486.484*Delta_Bat_Score_vs_LHP_2023 + 1179.44*Delta_Bat_Score_vs_RHP_2023 - 591.871))
-
+    
     #After some analysis of the players the model originally predicted would be two-way players, we found only one actually had the qualifications to be a real two-way player; the rest were position players who pitched a game or two in the last two years
     #Our analysis determined player ID 18396fcf5f98aac97ec6127f7924868d3ef7bd9e must correspond to Shohei Ohtani since no one else received 500+ PA and faced 500+ batters
     #Since Ohtani could not pitch in 2024 due to injury, we specifically set only his predicted BF for 2024 to be 0 without checking more specific information
@@ -270,7 +270,15 @@ for player_id in sample_submission["PLAYER_ID"].unique():
 
         #Use optimized linear regression model with the max function incorporated to make a prediction for the total number of batters faced a player will get in 2024; the max function ensures the result is nonnegative
         Batters_Faced_Prediction_2024 = round(max(0, -19.0598*Vertical_Position_of_Ball_Crossing_Home_Plate_vs_RHB_2022 + 0.172054*Batters_Faced_2022 + 24.4149*Strikeout_vs_LHB_Percentage_2022 - 192.214*Strikeout_vs_RHB_Percentage_2022 - 42.7111*Walk_vs_LHB_Percentage_2022 + 140.701*Walk_vs_RHB_Percentage_2022 - 266.172*Delta_Bat_Score_vs_RHB_2022 - 17.7523*Vertical_Movement_vs_LHB_2023 - 38.4902*Vertical_Position_of_Ball_Crossing_Home_Plate_vs_RHB_2023 - 0.844144*Launch_Speed_vs_LHB_2023 - 3.96826*Launch_Speed_vs_RHB_2023 + 0.0304721*Release_Spin_Rate_vs_LHB_2023 + 22.0294*Release_Extension_vs_LHB_2023 - 135.385*wOBA_Value_vs_LHB_2023 - 295.126*wOBA_Value_vs_RHB_2023 - 26.9569*Pitch_Number_vs_LHB_2023 + 41.297*Pitch_Number_vs_RHB_2023 + 0.537172*Batters_Faced_2023 + 110.942*Strikeout_vs_LHB_Percentage_2023 + 130.2*Strikeout_vs_RHB_Percentage_2023 + 84.7407*Walk_vs_LHB_Percentage_2023 + 32.4222*Walk_vs_RHB_Percentage_2023 + 300.528*Delta_Bat_Score_vs_RHB_2023 + 93.2082*Japan + 7.57239*Height - 137.069))
+        
+    #Handle special cases where the original linear regression model for hitting projects 0 PA for 2024 and assign the prediction the unweighted average of PA's for 2022 and 2023
+    if Plate_Appearances_Prediction_2024 == 0:
+        Plate_Appearances_Prediction_2024 = round((Plate_Appearances_2022 + Plate_Appearances_2023)/2)
 
+    #Handle special cases where the original linear regression model for hitting projects 0 BF for 2024 and assign the prediction the unweighted average of BF's for 2022 and 2023
+    if Batters_Faced_Prediction_2024 == 0:
+        Batters_Faced_Prediction_2024 = round((Batters_Faced_2022 + Batters_Faced_2023)/2)
+    
     #Compute final playing time prediction for a given player in 2024
     Playing_Time_Prediction_2024 = Plate_Appearances_Prediction_2024 + Batters_Faced_Prediction_2024
 
