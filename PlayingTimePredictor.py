@@ -106,14 +106,14 @@ for player_id in sample_submission["PLAYER_ID"].unique():
     if Plate_Appearances_Prediction_2024 == 0:
         Plate_Appearances_Prediction_2024 = round((Plate_Appearances_2022 + Plate_Appearances_2023)/2)
 
-    #Handle special cases where the original linear regression model for hitting projects 0 BF for 2024 and assign the prediction the unweighted average of BF's for 2022 and 2023
+    #Handle special cases where the original linear regression model for pitching projects 0 BF for 2024 and assign the prediction the unweighted average of BF's for 2022 and 2023
     if Batters_Faced_Prediction_2024 == 0:
         Batters_Faced_Prediction_2024 = round((Batters_Faced_2022 + Batters_Faced_2023)/2)
 
     #--------FINAL MODEL--------
     
     #Compute final playing time prediction for a given player in 2024
-    Playing_Time_Prediction_2024 = Plate_Appearances_Prediction_2024 + Batters_Faced_Prediction_2024
+    Playing_Time_Prediction_2024 = max(Plate_Appearances_Prediction_2024, Batters_Faced_Prediction_2024)
 
     #Display the result
     print(str(Playing_Time_Prediction_2024))
